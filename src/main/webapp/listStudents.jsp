@@ -40,7 +40,11 @@
                 <c:forEach var="student" items="${studentList}" varStatus="loop">
                     <tr>
                         <td>${loop.count}</td>
-                        <td>${student.studentId}</td>
+                        <td>
+                            <a href="${pageContext.request.contextPath}/studentDetail?studentId=${student.studentId}">
+                                ${student.studentId}
+                            </a>
+                        </td>
                         <td>${student.name}</td>
                         <td>${student.age}</td>
                     </tr>

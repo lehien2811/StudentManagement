@@ -4,11 +4,18 @@ public class Student {
     private String name;
     private String studentId;
     private int age;
+    private String address; // Thêm địa chỉ
 
-    public Student(String name, String studentId, int age) {
+    public Student(String name, String studentId, int age, String address) {
         this.name = name;
         this.studentId = studentId;
         this.age = age;
+        this.address = address;
+    }
+
+    // Nếu bạn vẫn cần constructor cũ (không có address)
+    public Student(String name, String studentId, int age) {
+        this(name, studentId, age, "");
     }
 
     public String getName() {
@@ -33,5 +40,13 @@ public class Student {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
     }
 }
