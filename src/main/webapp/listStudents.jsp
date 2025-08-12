@@ -6,17 +6,15 @@
     <meta charset="UTF-8">
     <title>Danh sách sinh viên</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
     <style>
         :root {
-            --primary-color: #4776E6;
-            --secondary-color: #8E54E9;
-            --accent-color: #FF4081;
-            --text-color: #2A2A2A;
-            --light-text: #FFFFFF;
-            --border-radius: 16px;
-            --box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+            --primary: #2563eb;
+            --text: #374151;
+            --surface: #f9fafb;
+            --border: #e5e7eb;
+            --radius: 0.5rem;
         }
 
         * {
@@ -26,164 +24,92 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(-45deg, #4776E6, #8E54E9, #4776E6);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
+            font-family: 'Nunito', sans-serif;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--text-color);
-            padding: 20px;
+            background-color: #edf2f7;
+            color: var(--text);
+            padding: 1rem;
         }
 
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        .container {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: var(--border-radius);
-            padding: 40px;
+        .card {
             width: 100%;
             max-width: 900px;
-            box-shadow: var(--box-shadow);
+            background-color: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
         h1 {
-            color: var(--primary-color);
-            font-size: 2.5em;
-            margin-bottom: 30px;
+            font-size: 1.75rem;
+            font-weight: 700;
             text-align: center;
-            position: relative;
-            padding-bottom: 15px;
-        }
-
-        h1::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 60px;
-            height: 4px;
-            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
-            border-radius: 2px;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
         }
 
         .table-container {
             overflow-x: auto;
-            margin: 20px 0;
         }
 
         table {
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
+            border-collapse: collapse;
         }
 
         th, td {
-            padding: 15px;
+            padding: 0.75rem 1rem;
             text-align: left;
-            border-bottom: 1px solid #E0E0E0;
+            border-bottom: 1px solid var(--border);
         }
 
         th {
-            background: linear-gradient(45deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            font-weight: 500;
-            position: relative;
-        }
-
-        th:first-child {
-            border-top-left-radius: 8px;
-        }
-
-        th:last-child {
-            border-top-right-radius: 8px;
-        }
-
-        tr:last-child td:first-child {
-            border-bottom-left-radius: 8px;
-        }
-
-        tr:last-child td:last-child {
-            border-bottom-right-radius: 8px;
-        }
-
-        tbody tr {
-            transition: all 0.3s ease;
-        }
-
-        tbody tr:hover {
-            background: rgba(71, 118, 230, 0.05);
-            transform: translateY(-2px);
+            font-weight: 600;
+            background-color: #f3f4f6;
         }
 
         td a {
-            color: var(--primary-color);
+            color: var(--primary);
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: color 0.2s;
         }
 
         td a:hover {
-            color: var(--secondary-color);
+            color: #1e40af;
         }
 
         .empty-message {
             text-align: center;
-            padding: 40px;
-            color: var(--text-color);
-            font-size: 1.1em;
+            padding: 1.5rem;
+            color: #6b7280;
         }
 
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            margin-top: 20px;
-            color: var(--primary-color);
+        .back-button {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: var(--radius);
+            font-weight: 600;
             text-decoration: none;
-            font-weight: 500;
-            transition: all 0.3s ease;
+            transition: background-color 0.2s;
         }
 
-        .back-link i {
-            margin-right: 8px;
-        }
-
-        .back-link:hover {
-            color: var(--secondary-color);
-            transform: translateX(-5px);
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 20px;
-            }
-
-            h1 {
-                font-size: 2em;
-            }
-
-            th, td {
-                padding: 10px;
-            }
+        .back-button:hover {
+            background-color: #1e40af;
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="card">
         <h1>Danh sách sinh viên</h1>
 
         <c:if test="${empty studentList}">
-            <div class="empty-message">
-                <i class="fas fa-info-circle"></i>
-                Chưa có sinh viên nào trong danh sách
-            </div>
+            <p class="empty-message">Không có sinh viên nào trong danh sách.</p>
         </c:if>
 
         <c:if test="${not empty studentList}">
@@ -215,8 +141,7 @@
             </div>
         </c:if>
 
-        <a href="${pageContext.request.contextPath}/student" class="back-link">
-            <i class="fas fa-arrow-left"></i>
+        <a href="${pageContext.request.contextPath}/student" class="back-button">
             Quay lại trang chủ
         </a>
     </div>
