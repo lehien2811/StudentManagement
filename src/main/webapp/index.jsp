@@ -1,84 +1,151 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
-    <title>Trang Chào Mừng</title>
+    <meta charset="UTF-8">
+    <title>Quản lý sinh viên</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"/>
     <style>
+        :root {
+            --primary: #2563eb;
+            --text: #374151;
+            --surface: #f9fafb;
+            --border: #e5e7eb;
+            --radius: 0.5rem;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Nunito', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #edf2f7;
+            color: var(--text);
+            padding: 1rem;
         }
-        h1, h2 {
-            color: #333;
+
+        .card {
+            width: 100%;
+            max-width: 480px;
+            background-color: var(--surface);
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 1.25rem;
         }
-        label {
-            display: inline-block;
-            width: 100px;
+
+        .form-group label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
-        input[type="text"], input[type="number"] {
-            padding: 5px;
-            width: 200px;
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            transition: border-color 0.2s;
         }
-        input[type="submit"] {
-            padding: 8px 15px;
-            background-color: #4CAF50;
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
-        input[type="submit"]:hover {
-            background-color: #45a049;
+
+        button:hover {
+            background-color: #1e40af;
         }
-        .error {
-            color: red;
-            margin-top: 10px;
-        }
-        a {
-            display: inline-block;
-            padding: 8px 15px;
-            background-color: #008CBA;
-            color: white;
+
+        .link {
+            display: block;
+            text-align: center;
+            margin-top: 1.25rem;
+            color: var(--primary);
             text-decoration: none;
-            border-radius: 4px;
-            margin-top: 10px;
+            font-weight: 600;
         }
-        a:hover {
-            background-color: #007B9A;
+
+        .error {
+            background-color: #fef2f2;
+            color: #ef4444;
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            margin-bottom: 1.25rem;
+            font-size: 0.875rem;
         }
     </style>
 </head>
 <body>
-    <h1>${message}</h1>
-    <p>Chào mừng đến với hệ thống quản lý sinh viên!</p>
+    <div class="card">
+        <h1>Quản lý sinh viên</h1>
 
-    <!-- Hiển thị thông báo lỗi nếu có -->
-    <c:if test="${not empty error}">
-        <p class="error">${error}</p>
-    </c:if>
+        <c:if test="${not empty error}">
+            <div class="error">
+                <i class="fas fa-exclamation-circle"></i>
+                ${error}
+            </div>
+        </c:if>
 
-    <!-- Form nhập sinh viên -->
-    <h2>Nhập thông tin sinh viên mới</h2>
-    <form action="${pageContext.request.contextPath}/student" method="post">
-        <div class="form-group">
-            <label for="name">Tên:</label>
-            <input type="text" id="name" name="name" required><br>
-        </div>
-        <div class="form-group">
-            <label for="studentId">Mã sinh viên:</label>
-            <input type="text" id="studentId" name="studentId" required><br>
-        </div>
-        <div class="form-group">
-            <label for="age">Tuổi:</label>
-            <input type="number" id="age" name="age" required><br>
-        </div>
-        <input type="submit" value="Thêm sinh viên">
-    </form>
+        <form action="${pageContext.request.contextPath}/student" method="post">
+            <div class="form-group">
+                <label for="name">Họ và tên</label>
+                <input type="text" id="name" name="name" required>
+            </div>
 
-<a href="${pageContext.request.contextPath}/listStudents">Xem danh sách sinh viên</a>
+            <div class="form-group">
+                <label for="studentId">Mã sinh viên</label>
+                <input type="text" id="studentId" name="studentId" required>
+            </div>
+
+            <div class="form-group">
+                <label for="age">Tuổi</label>
+                <input type="number" id="age" name="age" required>
+            </div>
+
+            <button type="submit">Thêm sinh viên</button>
+        </form>
+
+        <a href="${pageContext.request.contextPath}/listStudents" class="link">
+            Xem danh sách sinh viên
+        </a>
+    </div>
 </body>
 </html>
