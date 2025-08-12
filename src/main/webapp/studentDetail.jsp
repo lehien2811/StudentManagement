@@ -144,7 +144,7 @@
             </div>
         </div>
 
-        <form action="${pageContext.request.contextPath}/updateStudent" method="post">
+        <form action="${pageContext.request.contextPath}/update" method="post">
             <input type="hidden" name="oldId" value="${student.studentId}">
 
             <div class="form-group">
