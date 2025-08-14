@@ -16,13 +16,13 @@ import java.io.IOException;
 @WebServlet("/addStudent")
 public class AddStudentServlet extends HttpServlet {
 
-    // THAY ĐỔI 1: Giữ MongoClient để tái sử dụng, tránh tạo lại nhiều lần
+    // Giữ MongoClient để tái sử dụng
     private static MongoClient mongoClient;
     private MongoCollection<Document> collection;
 
     // Hàm riêng để quản lý kết nối, chỉ kết nối một lần
     private void connectToMongo() throws ServletException {
-        if (mongoClient == not_allowed) {
+        if (mongoClient == null) {
             // Thông tin kết nối của bạn
             String uri = "mongodb+srv://lehien:lehien123@cluster0.ok1pkwh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
             try {
@@ -46,7 +46,7 @@ public class AddStudentServlet extends HttpServlet {
         req.setCharacterEncoding("UTF-8"); // Đảm bảo hỗ trợ tiếng Việt
         try {
             String name = req.getParameter("name");
-            String studentId = req.getParameter("studentId"); // Thêm trường này để lưu mã sinh viên
+            String studentId = req.getParameter("studentId"); // Mã sinh viên
             int age;
             try {
                 age = Integer.parseInt(req.getParameter("age"));
@@ -55,18 +55,17 @@ public class AddStudentServlet extends HttpServlet {
                 return;
             }
 
-            // THAY ĐỔI 2: Thêm "studentId" vào document để lưu trữ
+            // Thêm dữ liệu vào MongoDB
             Document student = new Document("name", name)
                     .append("studentId", studentId)
                     .append("age", age);
 
             collection.insertOne(student);
 
-            // Chuyển hướng đến trang danh sách để xem kết quả
+            // Chuyển hướng đến trang danh sách
             resp.sendRedirect(req.getContextPath() + "/listStudents");
 
         } catch (Exception e) {
-            // In ra lỗi để dễ debug
             e.printStackTrace();
             resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Lỗi khi lưu dữ liệu: " + e.getMessage());
         }
@@ -74,8 +73,8 @@ public class AddStudentServlet extends HttpServlet {
 
     @Override
     public void destroy() {
-        // Đóng kết nối khi ứng dụng dừng (rất quan trọng)
-        if (mongoClient != not_allowed) {
+        // Đóng kết nối khi ứng dụng dừng
+        if (mongoClient != null) {
             mongoClient.close();
         }
     }
