@@ -1,6 +1,9 @@
 package com.example;
 
 import com.example.model.Student;
+import com.mongodb.client.*;
+import org.bson.Document;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -13,40 +16,61 @@ import java.util.List;
 @WebServlet("/student")
 public class StudentController extends HttpServlet {
 
-    private static List<Student> studentsList = new ArrayList<>();
+    private static MongoClient mongoClient;
+    private static MongoCollection<Document> collection;
 
-    public static List<Student> getStudentsList() {
-        return studentsList;
+    @Override
+    public void init() throws ServletException {
+        try {
+            // Kết nối MongoDB local
+            mongoClient = MongoClients.create("mongodb://localhost:27017");
+            MongoDatabase database = mongoClient.getDatabase("student_db");
+            collection = database.getCollection("students");
+        } catch (Exception e) {
+            throw new ServletException("Không thể kết nối MongoDB: " + e.getMessage());
+        }
     }
 
-    // Lấy 1 sinh viên theo studentId
+    public static List<Student> getStudentsList() {
+        List<Student> students = new ArrayList<>();
+        FindIterable<Document> docs = collection.find();
+        for (Document doc : docs) {
+            String name = doc.getString("name");
+            String studentId = doc.getString("studentId");
+            int age = doc.getInteger("age", 0);
+            String address = doc.getString("address");
+            students.add(new Student(name, studentId, age, address));
+        }
+        return students;
+    }
+
     public static Student getStudentById(String studentId) {
-        for (Student s : studentsList) {
-            if (s.getStudentId().equals(studentId)) {
-                return s;
-            }
+        Document doc = collection.find(new Document("studentId", studentId)).first();
+        if (doc != null) {
+            return new Student(
+                    doc.getString("name"),
+                    doc.getString("studentId"),
+                    doc.getInteger("age", 0),
+                    doc.getString("address")
+            );
         }
         return null;
     }
 
-    // Cập nhật thông tin sinh viên
     public static void updateStudent(String oldStudentId, String newStudentId, String name, int age, String address) {
-        for (Student s : studentsList) {
-            if (s.getStudentId().equals(oldStudentId)) {
-                s.setStudentId(newStudentId);
-                s.setName(name);
-                s.setAge(age);
-                s.setAddress(address);
-                break;
-            }
-        }
+        Document query = new Document("studentId", oldStudentId);
+        Document update = new Document("$set", new Document("studentId", newStudentId)
+                .append("name", name)
+                .append("age", age)
+                .append("address", address));
+        collection.updateOne(query, update);
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         request.setAttribute("message", "Quản lý sinh viên");
-        request.setAttribute("studentList", studentsList);
+        request.setAttribute("studentList", getStudentsList());
         request.getRequestDispatcher("/index.jsp").forward(request, response);
     }
 
@@ -57,15 +81,26 @@ public class StudentController extends HttpServlet {
             String name = request.getParameter("name");
             String studentId = request.getParameter("studentId");
             int age = Integer.parseInt(request.getParameter("age"));
-            String address = request.getParameter("address"); // Thêm địa chỉ
+            String address = request.getParameter("address");
 
-            Student newStudent = new Student(name, studentId, age, address);
-            studentsList.add(newStudent);
+            Document newStudent = new Document("name", name)
+                    .append("studentId", studentId)
+                    .append("age", age)
+                    .append("address", address);
+
+            collection.insertOne(newStudent);
 
             response.sendRedirect(request.getContextPath() + "/listStudents");
         } catch (NumberFormatException e) {
             request.setAttribute("error", "Tuổi phải là số hợp lệ!");
             doGet(request, response);
+        }
+    }
+
+    @Override
+    public void destroy() {
+        if (mongoClient != null) {
+            mongoClient.close();
         }
     }
 }

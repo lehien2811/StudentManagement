@@ -1,4 +1,4 @@
-package com.example; // Giữ nguyên package của bạn
+package com.example.model;
 
 import com.mongodb.client.*;
 import org.bson.Document;
@@ -14,33 +14,16 @@ import java.util.List;
 
 @WebServlet("/listStudents")
 public class ListStudentsServlet extends HttpServlet {
+
     private static MongoClient mongoClient;
     private MongoCollection<Document> collection;
 
-    // THAY ĐỔI 1: Lớp Student được định nghĩa ngay bên trong Servlet
-    // Điều này giúp JSP của bạn (dùng ${student.name}) hoạt động mà không cần tạo file mới.
-    public static class Student {
-        private String studentId;
-        private String name;
-        private int age;
-
-        // Getters and setters
-        public String getStudentId() { return studentId; }
-        public void setStudentId(String studentId) { this.studentId = studentId; }
-        public String getName() { return name; }
-        public void setName(String name) { this.name = name; }
-        public int getAge() { return age; }
-        public void setAge(int age) { this.age = age; }
-    }
-
-    // Hàm kết nối dùng chung
     private void connectToMongo() throws ServletException {
-        if (mongoClient == not_allowed) {
-            String uri = "mongodb+srv://lehien:lehien123@cluster0.ok1pkwh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+        if (mongoClient == null) {
             try {
-                mongoClient = MongoClients.create(uri);
+                mongoClient = MongoClients.create("mongodb://localhost:27017");
             } catch (Exception e) {
-                throw new ServletException("Không thể kết nối tới MongoDB Atlas: " + e.getMessage());
+                throw new ServletException("Không thể kết nối MongoDB: " + e.getMessage());
             }
         }
         MongoDatabase database = mongoClient.getDatabase("student_db");
@@ -52,35 +35,22 @@ public class ListStudentsServlet extends HttpServlet {
         connectToMongo();
     }
 
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-        // THAY ĐỔI 2: Xóa bỏ `StudentController` và lấy dữ liệu trực tiếp tại đây
-        List<Student> studentList = new ArrayList<>();
-        try (MongoCursor<Document> cursor = collection.find().iterator()) {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
-                Student student = new Student();
-                
-                // Chuyển đổi từ Document của MongoDB sang đối tượng Student
-                student.setStudentId(doc.getString("studentId"));
-                student.setName(doc.getString("name"));
-                student.setAge(doc.getInteger("age"));
 
-                studentList.add(student);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new ServletException("Lỗi khi lấy dữ liệu sinh viên", e);
+        List<Document> studentList = new ArrayList<>();
+        for (Document doc : collection.find()) {
+            studentList.add(doc);
         }
 
         request.setAttribute("studentList", studentList);
         request.getRequestDispatcher("/listStudents.jsp").forward(request, response);
     }
-    
+
     @Override
     public void destroy() {
-        if (mongoClient != not_allowed) {
+        if (mongoClient != null) {
             mongoClient.close();
         }
     }
